@@ -1,16 +1,43 @@
-import { Page } from '@playwright/test';
+import { Locator, Page, expect } from '@playwright/test';
 
+type CheckoutInformation = {
+    firstName: string;
+    lastName: string;
+    postalCode: string;
+};
 export class CheckoutPage {
-    constructor(private page: Page) {}
+    // * locators
+    readonly firstNameInput: Locator;
+    readonly lastNameInput: Locator;
+    readonly postalCodeInput: Locator;
+    readonly continueButton: Locator;
+    readonly finishButton: Locator;
+    readonly successMessage: Locator;
 
-    async fillInformation(first: string, last: string, zip: string) {
-        await this.page.fill('#first-name', first);
-        await this.page.fill('#last-name', last);
-        await this.page.fill('#postal-code', zip);
-        await this.page.click('#continue');
+    constructor(private readonly page: Page) {
+        this.firstNameInput = page.locator('#first-name');
+        this.lastNameInput = page.locator('#last-name');
+        this.postalCodeInput = page.locator('#postal-code');
+        this.continueButton = page.locator('#continue');
+        this.finishButton = page.locator('#finish');
+        this.successMessage = page.locator('.complete-header');
     }
 
+    // * fill checkout information
+    async fillInformation(data: CheckoutInformation) {
+        await this.firstNameInput.fill(data.firstName);
+        await this.lastNameInput.fill(data.lastName);
+        await this.postalCodeInput.fill(data.postalCode);
+        await this.continueButton.click();
+    }
+
+    // * finish checkout
     async finish() {
-        await this.page.click('#finish');
+        await this.finishButton.click();
+    }
+
+    // * verify checkout success
+    async verifyCheckoutSuccess() {
+        await expect(this.successMessage).toContainText('Thank you for your order');
     }
 }

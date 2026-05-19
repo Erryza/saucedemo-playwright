@@ -1,11 +1,15 @@
-import { Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 
 export class Header {
-    constructor(private page: Page) {}
+    // *  locators
+    readonly cartIcon: Locator;
 
-    cartIcon = '.shopping_cart_link';
+    constructor(private readonly page: Page) {
+        this.cartIcon = page.locator('.shopping_cart_link');
+    }
 
+    // * navigate to cartt page
     async goToCart() {
-        await this.page.click(this.cartIcon);
+        await this.cartIcon.click();
     }
 }

@@ -1,28 +1,33 @@
-import { Page, expect } from "@playwright/test";
+import { Locator, Page, expect } from "@playwright/test";
 
 export class ProductFilter {
-    constructor(private page: Page) {}
-        // * locator dropdown filter
-        filterDropdown = '.product_sort_container';
+    // * locators
+    readonly filterDropdown: Locator;
+    readonly productNames: Locator;
+    readonly productPrices: Locator;
 
-        // * enum option
-        filterOptions = {
-            AZ: 'az',
-            ZA: 'za',
-            LOW_HIGH: 'lohi',
-            HIGH_LOW: 'hilo'
-        };
+    // * enum-like readonly object
+    readonly filterOptions = {
+        AZ: 'az',
+        ZA: 'za',
+        LOW_HIGH: 'lohi',
+        HIGH_LOW: 'hilo'
+    } as const;
 
-        // * select filter
+    constructor(private readonly page: Page) {
+        this.filterDropdown = page.locator('.product_sort_container');
+        this.productNames = page.locator('.inventory_item_name');
+        this.productPrices = page.locator('.inventory_item_price');
+    }
+
+        // * select filter option
         async selectFilter(option: string) {
-            await this.page.selectOption(this.filterDropdown, option);
+            await this.filterDropdown.selectOption(option);
         }
         
-        
+        // * get all product names
         async getProductNames(): Promise<string[]> {
-            return await this.page
-            .locator('.inventory_item_name')
-            .allTextContents();
+            return await this.productNames.allTextContents();
         }
 
         // * verify ascending sort
@@ -45,16 +50,14 @@ export class ProductFilter {
 
         // * get all prices
         async getPrices(): Promise<number[]> {
-            const prices = await this.page
-            .locator('.inventory _item_price')
-            .allTextContents();
+            const prices = await this.productPrices.allTextContents();
 
             return prices.map(price =>
                 Number(price.replace('$', ''))
             );
         }
 
-        // * verify low to high
+        // * verify price low to high
         async verifyLowToHigh() {
             const actual = await this.getPrices();
 
@@ -63,7 +66,7 @@ export class ProductFilter {
             expect(actual).toEqual(expected);
         }
 
-        // * verify high to low
+        // * verify price high to low
         async verifyHighToLow() {
             const actual = await this.getPrices();
 

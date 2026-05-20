@@ -1,6 +1,6 @@
 export type LoginExpected = | 'success' | 'error';
 
-export type LoginScenario = {
+export type LoginScenarios = {
     title: string;
     username: string;
     password: string;
@@ -8,8 +8,7 @@ export type LoginScenario = {
     expectedMessage?: string;
 };
 
-export const loginData:
-Readonly<LoginScenario[]> = [
+export const loginScenarios: Readonly<LoginScenarios[]> = [
     {
         title: 'Valid Login',
         username: 'standard_user',

@@ -8,8 +8,7 @@ export type FilterScenario = {
         | 'verifyHighToLow';
     };
 
-    export const filterScenarios:
-    Readonly<FilterScenario[]> = [
+export const filterScenarios: Readonly<FilterScenario[]> = [
     {
         title: '@smoke Sort product A-Z',
         option: 'AZ',
